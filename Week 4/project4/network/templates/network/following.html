@@ -1,0 +1,119 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+    <script>
+        function getCookie(name) {
+            const token = `; ${document.cookie}`;
+            const tokenParts = token.split(`; ${name}=`);
+            if (tokenParts.length == 2)
+                return tokenParts.pop().split(';').shift()
+        }
+
+        function edit(id) {
+            const newPost = document.getElementById(`postText${id}`).value
+            const textBox = document.getElementById(`textBox${id}`)
+            const modal = document.getElementById(`modal${id}`)
+            
+            fetch(`/edit/${id}`, {
+            method: 'POST',
+            headers: {"Content-type": "application/json", "X-CSRFToken": getCookie("csrftoken")},
+            body: JSON.stringify({
+                postText: newPost
+            })
+        })
+        .then(response => response.text())
+        .then(result => {
+            // Print result
+            textBox.innerHTML = newPost
+            
+        });
+        }
+        function like(postID, likedPosts) {
+            if (likedPosts.includes(postID)) {
+                var liked = true
+            } else {
+                var liked = false
+            }
+            if (liked === true) {
+                fetch(`unlike/${postID}`)
+                .then(response => response.json())
+                .then(result => {
+                    // Change Button
+                    count = result['likes']
+                    document.getElementById(`button${postID}`).innerHTML = "Like"
+                    document.getElementById(`likeCount${postID}`).innerHTML = "Likes: " + count;
+                });
+            } else {
+                fetch(`like/${postID}`)
+                .then(response => response.json())
+                .then(result => {
+                    // Change Button
+                    count = result['likes']
+                    document.getElementById(`button${postID}`).innerHTML = "Unlike"
+                    document.getElementById(`likeCount${postID}`).innerHTML = "Likes: " + count;
+                });
+            }
+        }
+    </script>
+    {% for post in posts %}
+    
+    <div class="card border-dark mb-3" style="width: 100%;">
+        <div class="card-body">
+            <a style = "color: blue;" href="{% url 'profile' post.user.id %}"><strong>@{{ post.user }}</strong></a>
+            <h6 id = "textBox{{ post.id }}">{{ post.postText }}</h6>
+            <p>{{ post.timestamp }}</p>
+            {% if user == post.user %} 
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal{{ post.id }}">
+                    Edit
+                </button>
+                
+                <!-- Modal -->
+                <div class="modal fade" id="modal{{ post.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Edit Post</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        </div>
+                        <div class="modal-body">
+                            <textarea autofocus = true class="form-control" type="text" name="postText" id = "postText{{ post.id }}">{{ post.postText }}</textarea>
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" onclick = "edit('{{ post.id }}')" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                <p>{{ post.postLikes }}</p>
+            {% elif user.is_authenticated %}
+                {% if post.id in likedPosts %}
+                <div>
+                    <button id = "button{{ post.id }}" type = "button"  onclick = "like('{{ post.id }}', '{{ likedPosts }}')">Unlike</button>
+                </div>
+                {% else %}
+                <div>
+                    <button id = "button{{ post.id }}" type = "button" onclick = "like('{{ post.id }}', '{{ likedPosts }}')">Like</button>
+                </div>
+                {% endif %}
+            {% endif %}
+            <div id = "likeCount{{ post.id }}">
+                <p>Likes: {{ post.postLikes }}</p>
+            </div>
+        </div>
+      </div>
+    {% endfor %}
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            {% if posts.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page={{ posts.previous_page_number }}">Previous</a></li>
+            {% endif %}
+            {% if posts.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ posts.next_page_number }}">Next</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endblock %}

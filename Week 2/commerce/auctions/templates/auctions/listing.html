@@ -1,0 +1,71 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    {% if message %}
+    <div class="alert alert-primary" role="alert">
+        {{ message }}
+    </div>
+    {% endif %}
+    <div>
+        {% if user.is_authenticated %}
+            {% if onWatchList %}
+                <form action = "{% url 'removeWL' %}" method = "POST" id = "{{ listing.id }}">
+                    {% csrf_token %}
+                    <input type = "hidden" id = "id" name = "id" value = "{{ listing.id }}">
+                    <button type = "submit" class = "btn btn-danger">Remove From Watchlist</button>
+                </form>
+            {% else %}
+            <form action = "{% url 'addWL' %}" method = "POST">
+                {% csrf_token %}
+                <input type = "hidden" id = "id" name = "id" value = "{{ listing.id }}">
+                <button type = "submit" class = "btn btn-success">Add To Watchlist</button>
+            </form>
+            {% endif %}
+        {% endif %}
+    </div>
+    <h1>{{ listing.title }}</h1>
+    <img src="{{ listing.image }}" style = "width: 40%">
+    <h2 class="price">${{ listing.price.bid2 }}</h2>
+    {% if user.is_authenticated %}
+        {% if listing.active == True %}
+        <form action = "{% url 'bid' listing.id %}"  method = "POST">
+            {% csrf_token %}
+            <input type = "number" min = "{{ listing.price.bid2 }}" name = "bid" id = "bid" placeholder = "Enter a bid" required>
+            <button type = "submit" class = "btn btn-success">Bid</button>
+        </form>
+        {% endif %}
+        {% if isOwner and listing.active == True %}
+        <form action = "{% url 'closeListing' listing.id %}"  method = "POST">
+            {% csrf_token %}
+            <button type = "submit" class = "btn btn-success">Close Auction</button>
+        </form>
+        {% endif %}
+    {% endif %}
+    <h3>{{ listing.description }}</h3>
+    <h3>Owner: {{ listing.owner }}</h3>
+    <h4>Category: {{ listing.category }}</h4>
+    {% if user.is_authenticated %}
+        <form action = "{% url 'addComment' %}"  method = "POST">
+            {% csrf_token %}
+            <input type = "text" name = "comment" id = "comment" placeholder = "Enter a comment" required>
+            <input type = "hidden" id = "id" name = "id" value = "{{ listing.id }}">
+            <button type = "submit" class = "btn btn-success">Comment</button>
+        </form>
+    {% endif %}
+    <h2>Comments</h2>
+        {% if comments %}
+            {% for comment in comments %}
+            <div class = "card" style = "width: 18rem">
+                <div class = "card-body">
+                    <h3>{{ comment.writer }}</h3>
+                    <p>{{ comment.message }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div>
+                <h2>No Comments!</h2>
+            </div>
+        {% endif %}
+   
+{% endblock %}

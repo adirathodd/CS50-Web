@@ -1,0 +1,22 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Watchlist</h2>
+    <div class = "row mx-3">
+    {% for listing in listings %}
+    <form action = "{% url 'listing' %}", method = "POST">
+        {% csrf_token %}
+        <div class="card mx-3" . style = "width: 18rem;">
+            <input type = "hidden" id = "listing" name = "listing" value = "{{ listing.id }}">
+            <h3>{{ listing.title }}</h1>
+            <img src="{{ listing.image }}">
+            <p class="price">${{ listing.price.bid2 }}</p>
+            <p>{{ listing.description }}</p>
+            <p>Category: {{ listing.category }}</p>
+            <button type = "submit" class="btn btn-primary">See Listing</a>
+        </div>
+    </form>
+    {% endfor %}
+    </div>
+
+{% endblock %}

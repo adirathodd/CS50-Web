@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Advanced Search</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <style>
+            #textfield {
+                margin: 20px;
+            }
+            h1 {
+                text-align: left;
+                font-family: "Product Sans";
+                font-size: 30px;
+                color: blue;
+            }
+            div {
+                margin: 10px;
+                text-align: right;
+                font-family: "Product Sans";
+                font-size: 20px;
+                margin-right: 15px;
+                padding: 10px;
+            }
+            h3 {
+                padding: 10px;
+            }
+            form {
+                padding: 10px;
+                font-family: "Product Sans";
+            }
+            body {
+                align-self: center;
+            }
+            table {
+                margin: 10px;
+                width: 60%;
+            }
+        </style>
+    </head>
+    <div>
+        <a style = "color: black; margin-right: 20px" type = "button"  href="index.html">Back to Search</a>
+        <h1>Google</h1>
+    </div>
+    <body>
+        <h3>Advanced Search</h3>
+        <form action="https://google.com/search">
+            <table>
+                <tr>Find pages with... </tr>
+                <tr></tr>
+                <tr>
+                    <td>all these words:</td>
+                    <td><input type="text" class="form-control" name="as_q"></td>
+                </tr>
+                <tr>
+                    <td>this exact word or phrase:</td>
+                    <td><input type="text" class="form-control" name="as_epq"></td>
+                </tr>
+                <tr>
+                    <td>any of these words:</td>
+                    <td><input type="text" class="form-control" name="as_oq"></td>
+                </tr>
+                <tr>
+                    <td>none of these words:</td>
+                    <td><input type="text" class="form-control" name="as_eq"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td style="text-align: right; padding-top: 10px;" ><input class="btn btn-primary" type="submit" value="Advanced Search"></td>
+                </tr>
+            </table>
+        </form>
+    </body>
+</html>
